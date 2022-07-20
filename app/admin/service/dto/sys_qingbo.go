@@ -1,0 +1,99 @@
+package dto
+
+import (
+	"go-admin/app/admin/models"
+	"go-admin/common/dto"
+	common "go-admin/common/models"
+	"strconv"
+)
+
+// SysQingboGetPageReq 任务列表
+type SysQingboGetPageReq struct {
+	dto.Pagination  `search:"-"`
+	Name            string `form:"name" search:"type:contains;column:name;table:sys_qingbo"`
+	Date            int    `form:"Date" search:"type:contains;column:date;table:sys_qingbo"`
+	ServiceQuality  int    `form:"ServiceQuality" search:"type:contains;column:service_quality;table:sys_qingbo"`
+	ServiceContent  int    `form:"ServiceContent" search:"type:contains;column:service_content;table:sys_qingbo"`
+	ServiceTime     string `form:"ServiceTime" search:"type:contains;column:service_time;table:sys_qingbo"`
+	Address         string `form:"Address"search:"type:contains;column:address;table:sys_qingbo"`
+	Money           int    `form:"Money" search:"type:contains;column:money;table:sys_qingbo"`
+	Telephone       string `form:"Telephone" search:"type:contains;column:telephone;table:sys_qingbo"`
+	CompanyNameType int    `form:"CompanyNameType" search:"type:contains;column:company_name_type;table:sys_qingbo"`
+	CompanyType     int    `form:"CompanyType" search:"type:contains;column:company_type;table:sys_qingbo"`
+	StartDate       string `form:"startDate" search:"type:contains;column:date;table:sys_qingbo"`
+	EndDate         string `form:"endDate" search:"type:contains;column:date;table:sys_qingbo"`
+	CreatedAtOrder  string `form:"createdAtOrder"`
+}
+
+type SysQingboControl struct {
+	Id              int      `uri:"Id" comment:"编码"`                // 编码
+	Date            string   `json:"Date" comment:"日期"`             //
+	Name            string   `json:"Name" comment:"名字"`             //
+	ServiceQuality  int      `json:"ServiceQuality" comment:"服务性质"` //
+	ServiceContent  int      `json:"ServiceContent" comment:"服务内容"`
+	ServiceTime     string   `json:"ServiceTime" comment:"执行时间"`       //
+	Address         string   `json:"Address" comment:"地址"`             //
+	Money           int      `json:"Money" comment:"金额"`               //
+	Telephone       string   `json:"Telephone" comment:"联系人手机号"`       //
+	CompanyNameType int      `json:"CompanyNameType" comment:"公司名称类型"` //
+	CompanyType     int      `json:"CompanyType" comment:"是否公司"`       //
+	Dates           []string `form:"Dates"`
+	common.ControlBy
+}
+
+func (m *SysQingboGetPageReq) GetNeedSearch() interface{} {
+	return *m
+}
+
+// GetId 获取数据对应的ID
+func (s *SysQingboControl) GetId() interface{} {
+	return s.Id
+}
+
+func (s *SysQingboControl) Generate(model *models.SysQingbo) {
+	if s.Id == 0 {
+		model.Model = common.Model{Id: s.Id}
+	}
+
+	intDate, err := strconv.Atoi(s.Date)
+	if err != nil {
+
+	}
+	model.Date = intDate
+	model.Name = s.Name
+	model.Address = s.Address
+	model.ServiceTime = s.ServiceTime
+	model.ServiceContent = s.ServiceContent
+	model.ServiceQuality = s.ServiceQuality
+	model.Money = s.Money
+	model.Telephone = s.Telephone
+	model.CompanyType = s.CompanyType
+	model.CompanyNameType = s.CompanyNameType
+}
+
+// SysQingboGetPageCompanyReq 公司列表
+type SysQingboGetPageCompanyReq struct {
+	dto.Pagination `search:"-"`
+	CreatedAtOrder string `form:"createdAtOrder"`
+	IsAll          bool   `form:"isAll"`
+	// CompanyName    string `form:"CompanyName" search:"type:contains;column:company_name;table:sys_qingbo_company_list"`
+}
+
+type SysQingboCompanyControl struct {
+	Id          int    `uri:"Id" comment:"编码"` // 编码
+	CompanyName string `json:"CompanyName" comment:"公司名"`
+	common.ControlBy
+}
+
+// GetId 获取数据对应的ID
+func (s *SysQingboCompanyControl) GetId() interface{} {
+	return s.Id
+}
+
+func (s *SysQingboCompanyControl) Generate(model *models.SysQingboCompany) {
+	if s.Id == 0 {
+		model.Model = common.Model{Id: s.Id}
+	}
+
+	model.CompanyName = s.CompanyName
+}

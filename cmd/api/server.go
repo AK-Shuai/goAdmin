@@ -49,8 +49,21 @@ var (
 var AppRouters = make([]func(), 0)
 
 func init() {
-	StartCmd.PersistentFlags().StringVarP(&configYml, "config", "c", "config/settings.yml", "Start server with provided configuration file")
-	StartCmd.PersistentFlags().BoolVarP(&apiCheck, "api", "a", false, "Start server with check api data")
+	StartCmd.PersistentFlags().StringVarP(
+		&configYml,
+		"config",
+		"c",
+		"config/settings.yml",
+		"Start server with provided configuration file",
+	)
+
+	StartCmd.PersistentFlags().BoolVarP(
+		&apiCheck,
+		"api",
+		"a",
+		false,
+		"Start server with check api data",
+	)
 
 	//注册路由 fixme 其他应用的路由，在本目录新建文件放在init方法
 	AppRouters = append(AppRouters, router.InitRouter)

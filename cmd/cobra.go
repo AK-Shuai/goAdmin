@@ -4,13 +4,13 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-admin-team/go-admin-core/sdk/pkg"
-	"go-admin/cmd/app"
 	"go-admin/common/global"
 	"os"
 
 	"github.com/spf13/cobra"
 
 	"go-admin/cmd/api"
+	"go-admin/cmd/app"
 	"go-admin/cmd/config"
 	"go-admin/cmd/migrate"
 	"go-admin/cmd/version"
