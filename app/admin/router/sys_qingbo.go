@@ -18,6 +18,8 @@ func registerBusinessRouter(v1 *gin.RouterGroup, authMiddleware *jwt.GinJWTMiddl
 		r.GET("", api.GetPage)
 		r.POST("", api.Insert)
 		r.POST("/insert-list", api.InsertList)
+		r.DELETE("", api.Delete)
+		r.PUT("", api.Update)
 	}
 	r1 := v1.Group("/sys-company-list").Use(authMiddleware.MiddlewareFunc())
 	{

@@ -9,6 +9,7 @@ import (
 	"go-admin/app/admin/models"
 	"go-admin/app/admin/service"
 	"go-admin/app/admin/service/dto"
+	"go-admin/common/actions"
 )
 
 type QingBo struct {
@@ -28,7 +29,8 @@ func (e QingBo) GetPage(c *gin.Context) {
 		e.Logger.Error(err)
 		return
 	}
-
+	SysQingbo := models.SysQingbo{}
+	e.Orm.AutoMigrate(&SysQingbo)
 	/*
 		SysQingbo := models.SysQingbo{}
 		e.Orm.AutoMigrate(&SysQingbo)
@@ -95,6 +97,49 @@ func (e QingBo) InsertList(c *gin.Context) {
 	e.OK(req.GetId(), "创建成功")
 }
 
+func (e QingBo) Delete(c *gin.Context) {
+	req := dto.SysQingDeleteReq{}
+	s := service.QingBo{}
+	err := e.MakeContext(c).
+		MakeOrm().
+		Bind(&req).
+		MakeService(&s.Service).
+		Errors
+	if err != nil {
+		e.Logger.Error(err)
+		return
+	}
+	p := actions.GetPermissionFromContext(c)
+	err = s.RemoveQingBoList(&req, p)
+	if err != nil {
+		e.Error(500, err, "删除失败")
+		return
+	}
+	e.OK(req.GetId(), "删除成功")
+}
+
+func (e QingBo) Update(c *gin.Context) {
+	req := dto.SysQingUpdateReq{}
+	s := service.QingBo{}
+	err := e.MakeContext(c).
+		MakeOrm().
+		Bind(&req).
+		MakeService(&s.Service).
+		Errors
+	if err != nil {
+		e.Logger.Error(err)
+		return
+	}
+	req.SetUpdateBy(user.GetUserId(c))
+	p := actions.GetPermissionFromContext(c)
+	err = s.UpdateQingBoList(&req, p)
+	if err != nil {
+		e.Error(500, err, "更新失败")
+		return
+	}
+	e.OK(req.GetId(), "更新成功")
+}
+
 // GetPageCompany 获取公司名列表
 func (e QingBo) GetPageCompany(c *gin.Context) {
 	s := service.QingBo{}
@@ -145,6 +190,10 @@ func (e QingBo) InsertCompanyName(c *gin.Context) {
 
 	err = s.InsertCompanyName(&req)
 	if err != nil {
+		if err.Error() == "已存在" {
+			e.Error(500, err, "已存在名字")
+			return
+		}
 		e.Error(500, err, "创建失败")
 		return
 	}

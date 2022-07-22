@@ -1,9 +1,11 @@
 package service
 
 import (
+	"errors"
 	"github.com/go-admin-team/go-admin-core/sdk/service"
 	"go-admin/app/admin/models"
 	"go-admin/app/admin/service/dto"
+	"go-admin/common/actions"
 	cDto "go-admin/common/dto"
 	"gorm.io/gorm"
 	"strconv"
@@ -17,7 +19,7 @@ type QingBo struct {
 func (e *QingBo) GetPage(c *dto.SysQingboGetPageReq, list *[]models.SysQingbo, count *int64) error {
 	StartDate, _ := strconv.Atoi(c.StartDate)
 	EndDate, _ := strconv.Atoi(c.EndDate)
-	
+
 	err := e.Orm.
 		Scopes(
 			cDto.Paginate(c.GetPageSize(), c.GetPageIndex()),
@@ -144,10 +146,51 @@ func (e *QingBo) InsertCompanyName(c *dto.SysQingboCompanyControl) error {
 	var err error
 	var data models.SysQingboCompany
 	c.Generate(&data)
+	isNull := e.Orm.Where(" company_name = ?", c.CompanyName).Find(&data)
+
+	if isNull != nil {
+		return errors.New("已存在")
+	}
 	err = e.Orm.Create(&data).Error
 	if err != nil {
 		e.Log.Errorf("Service InsertSysConfig error:%s", err)
 		return err
+	}
+	return nil
+}
+
+// RemoveQingBoList 删除QingBoList
+func (e *QingBo) RemoveQingBoList(d *dto.SysQingDeleteReq, p *actions.DataPermission) error {
+	var data models.SysQingbo
+
+	db := e.Orm.Model(&data).
+		Scopes(
+			actions.Permission(data.TableName(), p),
+		).Delete(&data, d.GetId())
+	if err := db.Error; err != nil {
+		e.Log.Errorf("Service RemoveSysApi error:%s", err)
+		return err
+	}
+	if db.RowsAffected == 0 {
+		return errors.New("无权删除该数据")
+	}
+	return nil
+}
+
+func (e *QingBo) UpdateQingBoList(c *dto.SysQingUpdateReq, p *actions.DataPermission) error {
+	var err error
+	var model = models.SysQingbo{}
+	e.Orm.First(&model, c.GetId())
+	c.Generate(&model)
+	db := e.Orm.Save(&model)
+	err = db.Error
+	if err != nil {
+		e.Log.Errorf("Service UpdateSysConfig error:%s", err)
+		return err
+	}
+	if db.RowsAffected == 0 {
+		return errors.New("无权更新该数据")
+
 	}
 	return nil
 }

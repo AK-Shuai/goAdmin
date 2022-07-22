@@ -23,6 +23,7 @@ type SysQingboGetPageReq struct {
 	StartDate       string `form:"startDate" search:"type:contains;column:date;table:sys_qingbo"`
 	EndDate         string `form:"endDate" search:"type:contains;column:date;table:sys_qingbo"`
 	CreatedAtOrder  string `form:"createdAtOrder"`
+	Remark          string `form:"Remark" search:"type:contains;column:remark;table:sys_qingbo"`
 }
 
 type SysQingboControl struct {
@@ -37,7 +38,8 @@ type SysQingboControl struct {
 	Telephone       string   `json:"Telephone" comment:"联系人手机号"`       //
 	CompanyNameType int      `json:"CompanyNameType" comment:"公司名称类型"` //
 	CompanyType     int      `json:"CompanyType" comment:"是否公司"`       //
-	Dates           []string `form:"Dates"`
+	Dates           []string `json:"Dates"`
+	Remark          string   `json:"Remark" comment:"自定义内容"` //
 	common.ControlBy
 }
 
@@ -69,6 +71,7 @@ func (s *SysQingboControl) Generate(model *models.SysQingbo) {
 	model.Telephone = s.Telephone
 	model.CompanyType = s.CompanyType
 	model.CompanyNameType = s.CompanyNameType
+	model.Remark = s.Remark
 }
 
 // SysQingboGetPageCompanyReq 公司列表
@@ -96,4 +99,51 @@ func (s *SysQingboCompanyControl) Generate(model *models.SysQingboCompany) {
 	}
 
 	model.CompanyName = s.CompanyName
+}
+
+// SysQingDeleteReq 功能删除请求参数
+type SysQingDeleteReq struct {
+	Id int `json:"id"`
+}
+
+func (s *SysQingDeleteReq) GetId() interface{} {
+	return s.Id
+}
+
+type SysQingUpdateReq struct {
+	Id              int    `uri:"id" comment:"编码"`                // 编码
+	Date            int    `json:"Date" comment:"日期"`             //
+	Name            string `json:"Name" comment:"名字"`             //
+	ServiceQuality  int    `json:"ServiceQuality" comment:"服务性质"` //
+	ServiceContent  int    `json:"ServiceContent" comment:"服务内容"`
+	ServiceTime     string `json:"ServiceTime" comment:"执行时间"`       //
+	Address         string `json:"Address" comment:"地址"`             //
+	Money           int    `json:"Money" comment:"金额"`               //
+	Telephone       string `json:"Telephone" comment:"联系人手机号"`       //
+	CompanyNameType int    `json:"CompanyNameType" comment:"公司名称类型"` //
+	CompanyType     int    `json:"CompanyType" comment:"是否公司"`       //
+	Remark          string `json:"Remark" comment:"自定义内容"`           //
+	common.ControlBy
+}
+
+func (s *SysQingUpdateReq) GetId() interface{} {
+	return s.Id
+}
+
+func (s *SysQingUpdateReq) Generate(model *models.SysQingbo) {
+	if s.Id != 0 {
+		model.Id = s.Id
+	}
+
+	model.Date = s.Date
+	model.Name = s.Name
+	model.Address = s.Address
+	model.ServiceTime = s.ServiceTime
+	model.ServiceContent = s.ServiceContent
+	model.ServiceQuality = s.ServiceQuality
+	model.Money = s.Money
+	model.Telephone = s.Telephone
+	model.CompanyType = s.CompanyType
+	model.CompanyNameType = s.CompanyNameType
+	model.Remark = s.Remark
 }
