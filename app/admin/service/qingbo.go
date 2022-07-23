@@ -146,10 +146,12 @@ func (e *QingBo) InsertCompanyName(c *dto.SysQingboCompanyControl) error {
 	var err error
 	var data models.SysQingboCompany
 	c.Generate(&data)
-	isNull := e.Orm.Where(" company_name = ?", c.CompanyName).Find(&data)
+	err = e.Orm.Where(" company_name = ?", c.CompanyName).Find(&data).Error
 
-	if isNull != nil {
+	if &data.Id != nil {
 		return errors.New("已存在")
+	} else if err != nil {
+		return errors.New("查询失败")
 	}
 	err = e.Orm.Create(&data).Error
 	if err != nil {
