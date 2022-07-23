@@ -25,5 +25,6 @@ func registerBusinessRouter(v1 *gin.RouterGroup, authMiddleware *jwt.GinJWTMiddl
 	{
 		r1.GET("", api.GetPageCompany)
 		r1.POST("", api.InsertCompanyName)
+		r1.DELETE("", api.DeleteCompanyName)
 	}
 }

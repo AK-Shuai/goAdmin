@@ -194,3 +194,21 @@ func (e *QingBo) UpdateQingBoList(c *dto.SysQingUpdateReq, p *actions.DataPermis
 	}
 	return nil
 }
+
+// RemoveQingBoCompanyName 删除 CompanyName
+func (e *QingBo) RemoveQingBoCompanyName(d *dto.SysQingCompanyDeleteReq, p *actions.DataPermission) error {
+	var data models.SysQingboCompany
+
+	db := e.Orm.Model(&data).
+		Scopes(
+			actions.Permission(data.TableName(), p),
+		).Delete(&data, d.GetId())
+	if err := db.Error; err != nil {
+		e.Log.Errorf("Service RemoveSysApi error:%s", err)
+		return err
+	}
+	if db.RowsAffected == 0 {
+		return errors.New("无权删除该数据")
+	}
+	return nil
+}

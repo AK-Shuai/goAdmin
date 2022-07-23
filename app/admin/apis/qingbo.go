@@ -199,3 +199,24 @@ func (e QingBo) InsertCompanyName(c *gin.Context) {
 	}
 	e.OK(req.GetId(), "创建成功")
 }
+
+func (e QingBo) DeleteCompanyName(c *gin.Context) {
+	req := dto.SysQingCompanyDeleteReq{}
+	s := service.QingBo{}
+	err := e.MakeContext(c).
+		MakeOrm().
+		Bind(&req).
+		MakeService(&s.Service).
+		Errors
+	if err != nil {
+		e.Logger.Error(err)
+		return
+	}
+	p := actions.GetPermissionFromContext(c)
+	err = s.RemoveQingBoCompanyName(&req, p)
+	if err != nil {
+		e.Error(500, err, "删除失败")
+		return
+	}
+	e.OK(req.GetId(), "删除成功")
+}

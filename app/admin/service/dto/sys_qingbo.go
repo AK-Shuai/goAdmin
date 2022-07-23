@@ -147,3 +147,12 @@ func (s *SysQingUpdateReq) Generate(model *models.SysQingbo) {
 	model.CompanyNameType = s.CompanyNameType
 	model.Remark = s.Remark
 }
+
+// SysQingCompanyDeleteReq 功能删除请求参数
+type SysQingCompanyDeleteReq struct {
+	Id int `json:"id"`
+}
+
+func (s *SysQingCompanyDeleteReq) GetId() interface{} {
+	return s.Id
+}
