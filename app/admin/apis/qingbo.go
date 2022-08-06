@@ -97,6 +97,30 @@ func (e QingBo) InsertList(c *gin.Context) {
 	e.OK(req.GetId(), "创建成功")
 }
 
+// UploadExcel 上传任务excel
+func (e QingBo) UploadExcel(c *gin.Context) {
+	s := service.QingBo{}
+	req := dto.SysQingboControlExcel{}
+	err := e.MakeContext(c).
+		MakeOrm().
+		Bind(&req, binding.JSON).
+		MakeService(&s.Service).
+		Errors
+	if err != nil {
+		e.Logger.Error(err)
+		e.Error(500, err, err.Error())
+		return
+	}
+
+	req.SetCreateBy(user.GetUserId(c))
+	err = s.UploadExcel(&req)
+	if err != nil {
+		e.Error(500, err, "创建失败")
+		return
+	}
+	e.OK(1, "创建成功")
+}
+
 func (e QingBo) Delete(c *gin.Context) {
 	req := dto.SysQingDeleteReq{}
 	s := service.QingBo{}

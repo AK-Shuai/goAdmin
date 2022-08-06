@@ -74,6 +74,85 @@ func (s *SysQingboControl) Generate(model *models.SysQingbo) {
 	model.Remark = s.Remark
 }
 
+type SysQingboControlExcel struct {
+	Datas []SysQingboExcelList `json:datas`
+	common.ControlBy
+}
+
+type SysQingboExcelList struct {
+	Id              int    `uri:"Id" comment:"编码"`                // 编码
+	Date            string `json:"Date" comment:"日期"`             //
+	Name            string `json:"Name" comment:"名字"`             //
+	ServiceQuality  string `json:"ServiceQuality" comment:"服务性质"` //
+	ServiceContent  string `json:"ServiceContent" comment:"服务内容"`
+	ServiceTime     string `json:"ServiceTime" comment:"执行时间"`       //
+	Address         string `json:"Address" comment:"地址"`             //
+	Money           int    `json:"Money" comment:"金额"`               //
+	Telephone       string `json:"Telephone" comment:"联系人手机号"`       //
+	CompanyNameType string `json:"CompanyNameType" comment:"公司名称类型"` //
+	CompanyType     string `json:"CompanyType" comment:"是否公司"`       //
+	Remark          string `json:"Remark" comment:"自定义内容"`           //
+}
+
+// GetId 获取数据对应的ID
+func (s *SysQingboExcelList) GetId() interface{} {
+	return s.Id
+}
+
+func (s *SysQingboExcelList) Generate(model *models.SysQingbo, result map[string]int, excelList SysQingboExcelList) {
+
+	if excelList.Id == 0 {
+		model.Model = common.Model{Id: excelList.Id}
+	}
+
+	intDate, _ := strconv.Atoi(excelList.Date)
+
+	model.Date = intDate
+	model.Name = excelList.Name
+	model.Address = excelList.Address
+	model.ServiceTime = excelList.ServiceTime
+	model.ServiceContent = s.UpServiceContent(excelList)
+	model.ServiceQuality = s.UpServiceQuality(excelList)
+	model.Money = excelList.Money
+	model.Telephone = excelList.Telephone
+	model.CompanyType = s.UpCompanyType(excelList)
+	model.CompanyNameType = result[excelList.CompanyNameType]
+	model.Remark = excelList.Remark
+}
+
+func (s *SysQingboExcelList) UpServiceContent(excelList SysQingboExcelList) int {
+	var ServiceContent int
+
+	if excelList.ServiceContent == "除虫" {
+		ServiceContent = 1
+	} else if excelList.ServiceContent == "除鼠" {
+		ServiceContent = 2
+	}
+	return ServiceContent
+}
+
+func (s *SysQingboExcelList) UpServiceQuality(excelList SysQingboExcelList) int {
+	var ServiceQuality int
+
+	if excelList.ServiceQuality == "首次" {
+		ServiceQuality = 1
+	} else if excelList.ServiceQuality == "售后" {
+		ServiceQuality = 2
+	}
+	return ServiceQuality
+}
+
+func (s *SysQingboExcelList) UpCompanyType(excelList SysQingboExcelList) int {
+	var CompanyType int
+
+	if excelList.CompanyType == "是" {
+		CompanyType = 1
+	} else if excelList.CompanyType == "否" {
+		CompanyType = 2
+	}
+	return CompanyType
+}
+
 // SysQingboGetPageCompanyReq 公司列表
 type SysQingboGetPageCompanyReq struct {
 	dto.Pagination `search:"-"`

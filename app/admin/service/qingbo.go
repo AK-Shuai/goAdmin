@@ -66,6 +66,26 @@ func (e *QingBo) InsertList(c *dto.SysQingboControl) error {
 	return nil
 }
 
+// UploadExcel 新增excel
+func (e *QingBo) UploadExcel(c *dto.SysQingboControlExcel) error {
+	var data models.SysQingbo
+	var ssq dto.SysQingboExcelList
+	Companydata := make([]models.SysQingboCompany, 0)
+	Company := make(map[string]int)
+	for _, excelList := range c.Datas {
+
+		e.Orm.Find(&Companydata)
+		for _, CompanydataList := range Companydata {
+			Company[CompanydataList.CompanyName] = CompanydataList.Id
+		}
+		ssq.Generate(&data, Company, excelList)
+		e.Orm.Create(&data)
+
+		//o.JSON(200, gin.H{"code": 200, "data": Companydata, "msg": "msg"})
+	}
+	return nil
+}
+
 // BigSmallDate 日期筛选
 func BigSmallDate(startDate int, endDate int) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
