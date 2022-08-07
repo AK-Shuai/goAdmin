@@ -235,3 +235,36 @@ type SysQingCompanyDeleteReq struct {
 func (s *SysQingCompanyDeleteReq) GetId() interface{} {
 	return s.Id
 }
+
+// SysQingboGetPageServiceContentReq 服务性质
+type SysQingboGetPageServiceContentReq struct {
+	dto.Pagination `search:"-"`
+	CreatedAtOrder string `form:"createdAtOrder"`
+	IsAll          bool   `form:"isAll"`
+}
+
+type SysQingboServiceContentControl struct {
+	Id             int    `uri:"Id" comment:"编码"` // 编码
+	ServiceContent string `json:"ServiceContent" comment:"服务性质"`
+	common.ControlBy
+}
+
+func (s *SysQingboServiceContentControl) GetId() interface{} {
+	return s.Id
+}
+func (s *SysQingboServiceContentControl) Generate(model *models.SysQingboServiceContent) {
+	if s.Id == 0 {
+		model.Model = common.Model{Id: s.Id}
+	}
+
+	model.ServiceContent = s.ServiceContent
+}
+
+// SysQingServiceContentDeleteReq 服务性质删除结构体
+type SysQingServiceContentDeleteReq struct {
+	Id int `json:"id"`
+}
+
+func (s *SysQingServiceContentDeleteReq) GetId() interface{} {
+	return s.Id
+}

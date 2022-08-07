@@ -54,3 +54,24 @@ func (e *SysQingboCompany) Generate() models.ActiveRecord {
 func (e *SysQingboCompany) GetId() interface{} {
 	return e.Id
 }
+
+// SysQingboServiceContent /*  服务性质
+type SysQingboServiceContent struct {
+	models.Model
+	ServiceContent string `json:"ServiceContent" gorm:"comment:服务性质"` //
+	models.ControlBy
+	models.ModelTime
+}
+
+func (SysQingboServiceContent) TableName() string {
+	return "sys_qingbo_service_content"
+}
+
+func (e *SysQingboServiceContent) Generate() models.ActiveRecord {
+	o := *e
+	return &o
+}
+
+func (e *SysQingboServiceContent) GetId() interface{} {
+	return e.Id
+}

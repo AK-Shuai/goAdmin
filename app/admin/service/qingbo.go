@@ -234,3 +234,73 @@ func (e *QingBo) RemoveQingBoCompanyName(d *dto.SysQingCompanyDeleteReq, p *acti
 	}
 	return nil
 }
+
+// GetPageServiceContent 获取服务性质列表
+func (e *QingBo) GetPageServiceContent(c *dto.SysQingboGetPageServiceContentReq, list *[]models.SysQingboServiceContent, count *int64) error {
+
+	// 获取全部性质内容
+	if c.IsAll == true {
+		err := e.Orm.
+			Scopes(
+				OrderType(c.CreatedAtOrder),
+			).
+			Find(list).Limit(-1).Offset(-1).
+			Count(count).Error
+		if err != nil {
+			e.Log.Errorf("Service GetSysConfigPage error:%s", err)
+			return err
+		}
+	}
+	// 分页获取服务性质
+	err := e.Orm.
+		Scopes(
+			cDto.Paginate(c.GetPageSize(), c.GetPageIndex()),
+			OrderType(c.CreatedAtOrder),
+		).
+		Find(list).Limit(-1).Offset(-1).
+		Count(count).Error
+	if err != nil {
+		e.Log.Errorf("Service GetSysConfigPage error:%s", err)
+		return err
+	}
+	return nil
+}
+
+// InsertServiceContent 新增服务性质
+func (e *QingBo) InsertServiceContent(c *dto.SysQingboServiceContentControl) error {
+	var err error
+	var data models.SysQingboServiceContent
+	c.Generate(&data)
+	err = e.Orm.Where(" service_content"+
+		" = ?", c.ServiceContent).Find(&data).Error
+
+	if &data.Id != nil && data.Id >= 1 {
+		return errors.New("已存在")
+	} else if err != nil {
+		return errors.New("查询失败")
+	}
+	err = e.Orm.Create(&data).Error
+	if err != nil {
+		e.Log.Errorf("Service InsertSysConfig error:%s", err)
+		return err
+	}
+	return nil
+}
+
+// RemoveQingBoServiceContent 删除服务性质
+func (e *QingBo) RemoveQingBoServiceContent(d *dto.SysQingServiceContentDeleteReq, p *actions.DataPermission) error {
+	var data models.SysQingboServiceContent
+
+	db := e.Orm.Model(&data).
+		Scopes(
+			actions.Permission(data.TableName(), p),
+		).Delete(&data, d.GetId())
+	if err := db.Error; err != nil {
+		e.Log.Errorf("Service RemoveSysApi error:%s", err)
+		return err
+	}
+	if db.RowsAffected == 0 {
+		return errors.New("无权删除该数据")
+	}
+	return nil
+}

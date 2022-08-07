@@ -22,10 +22,18 @@ func registerBusinessRouter(v1 *gin.RouterGroup, authMiddleware *jwt.GinJWTMiddl
 		r.PUT("", api.Update)
 		r.POST("/upload-excel", api.UploadExcel)
 	}
+
 	r1 := v1.Group("/sys-company-list").Use(authMiddleware.MiddlewareFunc())
 	{
 		r1.GET("", api.GetPageCompany)
 		r1.POST("", api.InsertCompanyName)
 		r1.DELETE("", api.DeleteCompanyName)
+	}
+
+	r2 := v1.Group("/sys-service-content").Use(authMiddleware.MiddlewareFunc())
+	{
+		r2.GET("", api.GetPageServiceContent)
+		r2.POST("", api.InsertServiceContent)
+		r2.DELETE("", api.DeleteServiceContent)
 	}
 }

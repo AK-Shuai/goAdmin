@@ -244,3 +244,73 @@ func (e QingBo) DeleteCompanyName(c *gin.Context) {
 	}
 	e.OK(req.GetId(), "删除成功")
 }
+
+func (e QingBo) GetPageServiceContent(c *gin.Context) {
+	s := service.QingBo{}
+	req := dto.SysQingboGetPageServiceContentReq{}
+	err := e.MakeContext(c).
+		MakeOrm().
+		Bind(&req, binding.Form).
+		MakeService(&s.Service).
+		Errors
+	if err != nil {
+		e.Logger.Error(err)
+		return
+	}
+	SysQingboServiceContent := models.SysQingboServiceContent{}
+	e.Orm.AutoMigrate(&SysQingboServiceContent)
+
+	list := make([]models.SysQingboServiceContent, 0)
+	var count int64
+	err = s.GetPageServiceContent(&req, &list, &count)
+	if err != nil {
+		e.Error(500, err, "查询失败")
+		return
+	}
+
+	e.PageOK(list, int(count), req.GetPageIndex(), req.GetPageSize(), "查询成功")
+}
+
+func (e QingBo) InsertServiceContent(c *gin.Context) {
+	s := service.QingBo{}
+	req := dto.SysQingboServiceContentControl{}
+	err := e.MakeContext(c).
+		MakeOrm().
+		Bind(&req, binding.JSON).
+		MakeService(&s.Service).
+		Errors
+	if err != nil {
+		e.Logger.Error(err)
+		e.Error(500, err, err.Error())
+		return
+	}
+	req.SetCreateBy(user.GetUserId(c))
+
+	err = s.InsertServiceContent(&req)
+	if err != nil {
+		e.Error(500, err, "创建失败")
+		return
+	}
+	e.OK(req.GetId(), "创建成功")
+}
+
+func (e QingBo) DeleteServiceContent(c *gin.Context) {
+	req := dto.SysQingServiceContentDeleteReq{}
+	s := service.QingBo{}
+	err := e.MakeContext(c).
+		MakeOrm().
+		Bind(&req).
+		MakeService(&s.Service).
+		Errors
+	if err != nil {
+		e.Logger.Error(err)
+		return
+	}
+	p := actions.GetPermissionFromContext(c)
+	err = s.RemoveQingBoServiceContent(&req, p)
+	if err != nil {
+		e.Error(500, err, "删除失败")
+		return
+	}
+	e.OK(req.GetId(), "删除成功")
+}
