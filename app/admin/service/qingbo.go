@@ -71,6 +71,9 @@ func (e *QingBo) UploadExcel(c *dto.SysQingboControlExcel) error {
 	var data models.SysQingbo
 	var ssq dto.SysQingboExcelList
 	Companydata := make([]models.SysQingboCompany, 0)
+	ServiceContentdata := make([]models.SysQingboServiceContent, 0)
+
+	Content := make(map[string]int)
 	Company := make(map[string]int)
 	for _, excelList := range c.Datas {
 
@@ -78,7 +81,12 @@ func (e *QingBo) UploadExcel(c *dto.SysQingboControlExcel) error {
 		for _, CompanydataList := range Companydata {
 			Company[CompanydataList.CompanyName] = CompanydataList.Id
 		}
-		ssq.Generate(&data, Company, excelList)
+
+		e.Orm.Find(&ServiceContentdata)
+		for _, ServiceContentdataList := range ServiceContentdata {
+			Content[ServiceContentdataList.ServiceContent] = ServiceContentdataList.Id
+		}
+		ssq.Generate(&data, Company, excelList, Content)
 		e.Orm.Create(&data)
 
 		//o.JSON(200, gin.H{"code": 200, "data": Companydata, "msg": "msg"})

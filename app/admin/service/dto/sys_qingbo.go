@@ -99,7 +99,11 @@ func (s *SysQingboExcelList) GetId() interface{} {
 	return s.Id
 }
 
-func (s *SysQingboExcelList) Generate(model *models.SysQingbo, result map[string]int, excelList SysQingboExcelList) {
+func (s *SysQingboExcelList) Generate(
+	model *models.SysQingbo,
+	result map[string]int,
+	excelList SysQingboExcelList,
+	Content map[string]int) {
 
 	if excelList.Id == 0 {
 		model.Model = common.Model{Id: excelList.Id}
@@ -112,7 +116,7 @@ func (s *SysQingboExcelList) Generate(model *models.SysQingbo, result map[string
 	model.Address = excelList.Address
 	model.ServiceTime = excelList.ServiceTime
 	model.ServiceContent = s.UpServiceContent(excelList)
-	model.ServiceQuality = s.UpServiceQuality(excelList)
+	model.ServiceQuality = Content[excelList.ServiceQuality]
 	model.Money = excelList.Money
 	model.Telephone = excelList.Telephone
 	model.CompanyType = s.UpCompanyType(excelList)
