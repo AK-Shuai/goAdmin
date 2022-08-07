@@ -127,23 +127,22 @@ func (s *SysQingboExcelList) Generate(
 func (s *SysQingboExcelList) UpServiceContent(excelList SysQingboExcelList) int {
 	var ServiceContent int
 
-	if excelList.ServiceContent == "除虫" {
+	if excelList.ServiceContent == "蟑螂" {
 		ServiceContent = 1
-	} else if excelList.ServiceContent == "除鼠" {
+	} else if excelList.ServiceContent == "老鼠" {
 		ServiceContent = 2
+	} else if excelList.ServiceContent == "臭虫" {
+		ServiceContent = 3
+	} else if excelList.ServiceContent == "蚊蝇" {
+		ServiceContent = 4
+	} else if excelList.ServiceContent == "跳蚤" {
+		ServiceContent = 5
+	} else if excelList.ServiceContent == "蟑螂 老鼠" {
+		ServiceContent = 6
+	} else if excelList.ServiceContent == "四害" {
+		ServiceContent = 7
 	}
 	return ServiceContent
-}
-
-func (s *SysQingboExcelList) UpServiceQuality(excelList SysQingboExcelList) int {
-	var ServiceQuality int
-
-	if excelList.ServiceQuality == "首次" {
-		ServiceQuality = 1
-	} else if excelList.ServiceQuality == "售后" {
-		ServiceQuality = 2
-	}
-	return ServiceQuality
 }
 
 func (s *SysQingboExcelList) UpCompanyType(excelList SysQingboExcelList) int {
